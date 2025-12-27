@@ -14,36 +14,38 @@ export default function Footer() {
             <img 
               src="/seaglogo.png" 
               alt="SeaGlass Logo" 
-              className="h-16 md:h-20 w-auto object-contain mx-auto md:mx-0 md:-ml-14"
+              className="h-16 md:h-20 w-auto object-contain mx-auto md:mx-0 md:-ml-30"
             />
-            <p className="text-white/40 text-sm leading-relaxed max-w-xs mx-auto md:mx-0">
+            <p className="text-white/40 text-sm leading-relaxed max-w-xs mx-auto md:mx-0 md:-ml-16">
               SeaGlass ile geleceğin dijital bankacılık deneyimi. Para sorunu olmadan, indirimlerle unutulmaz tatiller sizin olsun!
             </p>
           </div>
 
           {/* Linkler */}
-          <div className="text-center md:text-left">
-            <h4 className="font-bold mb-6 uppercase tracking-[0.2em] text-[10px] text-cyan-400">Kurumsal</h4>
+          <div className="text-center md:text-left ">
+            <h4 className="font-bold mb-6 uppercase tracking-[0.2em] text-[16px] text-cyan-400">Kurumsal</h4>
             <ul className="space-y-4 text-sm text-white/60 font-medium">
               <li className="active:text-cyan-400 md:hover:text-cyan-400 cursor-pointer transition-colors uppercase tracking-wider">Hakkımızda</li>
               <li className="active:text-cyan-400 md:hover:text-cyan-400 cursor-pointer transition-colors uppercase tracking-wider">Güvenlik</li>
               <li className="active:text-cyan-400 md:hover:text-cyan-400 cursor-pointer transition-colors uppercase tracking-wider">Sözleşmeler</li>
+              <li className="active:text-cyan-400 md:hover:text-cyan-400 cursor-pointer transition-colors uppercase tracking-wider">KVKK</li>
             </ul>
           </div>
 
           {/* Yardım */}
           <div className="text-center md:text-left">
-            <h4 className="font-bold mb-6 uppercase tracking-[0.2em] text-[10px] text-cyan-400">Destek</h4>
+            <h4 className="font-bold mb-6 uppercase tracking-[0.2em] text-[16px]  text-cyan-400">Destek</h4>
             <ul className="space-y-4 text-sm text-white/60 font-medium">
               <li className="active:text-cyan-400 md:hover:text-cyan-400 cursor-pointer transition-colors uppercase tracking-wider">SSS</li>
               <li className="active:text-cyan-400 md:hover:text-cyan-400 cursor-pointer transition-colors uppercase tracking-wider">İletişim</li>
               <li className="active:text-cyan-400 md:hover:text-cyan-400 cursor-pointer transition-colors uppercase tracking-wider">Şubeler</li>
+              <li className="active:text-cyan-400 md:hover:text-cyan-400 cursor-pointer transition-colors uppercase tracking-wider">Site Haritası</li>
             </ul>
           </div>
 
           {/* Sosyal Medya */}
-          <div className="text-center md:text-left">
-            <h4 className="font-bold mb-6 uppercase tracking-[0.2em] text-[10px] text-cyan-400">Bizi Takip Edin</h4>
+          <div className="text-center md:text-left ">
+            <h4 className="font-bold mb-6 uppercase tracking-[0.2em] text-[16px]  text-cyan-400">Bizi Takip Edin</h4>
             <div className="flex gap-4 justify-center md:justify-start">
               {socialLinks.map((social, index) => {
                 const IconComp = IconMap[social.icon];
@@ -53,7 +55,7 @@ export default function Footer() {
                     href={social.url} 
                     className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center active:bg-cyan-400 active:text-black active:scale-110 md:hover:bg-cyan-400 md:hover:text-black md:hover:scale-110 transition-all duration-300 touch-manipulation"
                   >
-                    {IconComp && <IconComp size={20} />}
+                    {IconComp && <IconComp size={25} />}
                   </a>
                 );
               })}

@@ -23,7 +23,7 @@ function CreditCardShowcase() {
 
   return (
     <div
-      className="w-full max-w-sm sm:max-w-md mx-auto px-4 sm:px-0"
+      className="w-full -mr-1 max-w-sm sm:max-w-md mx-auto px-4 sm:px-0"
       onTouchStart={handleTouch}
       onMouseEnter={() => !isMobile && setIsTouched(true)}
       onMouseLeave={() => !isMobile && setIsTouched(false)}

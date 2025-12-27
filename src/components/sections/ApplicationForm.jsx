@@ -1,23 +1,44 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import GlassCard from "../cards/GlassCard";
-import Button from "../ui/Button";
-import { Sparkles, User, Mail, Phone, Send, ChevronDown } from "lucide-react";
+import { Sparkles, User, Mail, Phone, Send, ChevronDown, ShieldCheck, CreditCard } from "lucide-react"; 
 
 const cardOptions = [
-  { value: "classic", label: "Classic" },
-  { value: "gold", label: "Gold" },
-  { value: "platinum", label: "Platinum" }
+  { value: "classic", label: "Classic Kart", color: "from-gray-400 to-gray-600" },
+  { value: "gold", label: "Gold Privilege", color: "from-yellow-400 to-yellow-600" },
+  { value: "platinum", label: "Platinum Elite", color: "from-slate-300 to-slate-500" }
 ];
 
 export default function ApplicationForm() {
   const [formData, setFormData] = useState({
     fullName: "",
+    tcNo: "", 
     email: "",
     phone: "",
     cardType: "gold"
   });
 
   const [isOpen, setIsOpen] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
+  const dropdownRef = useRef(null);
+
+  // Dropdown dışına tıklanınca kapat
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,6 +46,12 @@ export default function ApplicationForm() {
   };
 
   const handleChange = (e) => {
+    if (e.target.name === "tcNo") {
+      const value = e.target.value.replace(/\D/g, "").slice(0, 11);
+      setFormData({ ...formData, [e.target.name]: value });
+      return;
+    }
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -33,167 +60,220 @@ export default function ApplicationForm() {
 
   const selectedOption = cardOptions.find(opt => opt.value === formData.cardType);
 
-
   const handleOptionClick = (value) => {
+    console.log("Seçilen kart:", value); 
     setFormData({ ...formData, cardType: value });
     setIsOpen(false);
   };
 
   return (
     <>
-      {/* Backdrop  */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-90 md:hidden bg-black/20"
-          onMouseDown={() => setIsOpen(false)}
-          onTouchStart={() => setIsOpen(false)}
-        />
-      )}
-
-      <GlassCard className="w-full max-w-5xl p-4 sm:p-6 md:p-8 border-white/30 bg-black/60 backdrop-blur-3xl shadow-[0_25px_60px_rgba(0,0,0,0.7)] relative z-50">
-      
+      <GlassCard className="w-full max-w-5xl p-6 md:p-11 border border-white/10 bg-gray-900/30 backdrop-blur-xl shadow-[0_0_100px_-20px_rgba(34,211,238,0.1)] relative z-10 rounded-3xl">
+        
+        <div className="absolute top-0  right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] pointer-events-none -translate-y-1/2 translate-x-1/2" />
+        
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 border-b border-white/20 pb-4 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-cyan-400/30 shadow-[0_0_20px_rgba(34,211,238,0.4)]">
-              <Sparkles size={20} className="text-cyan-400" />
+        <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 border-b border-white/10 pb-6 gap-4">
+          <div className="flex items-center gap-4">
+            <div className="relative group">
+                <div className="absolute inset-0 bg-cyan-400 blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+                <div className="relative p-3 rounded-xl bg-white/5 border border-white/10 shadow-lg">
+                  <Sparkles size={24} className="text-cyan-400" />
+                </div>
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-black text-white italic tracking-tighter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight drop-shadow-md">
                 Hemen Başvur
               </h2>
-              <p className="text-[10px] sm:text-[11px] text-cyan-400 uppercase tracking-[0.2em] font-black drop-shadow-sm">
-                Hızlı Onay Sistemi
-              </p>
+              <div className="flex items-center gap-2 mt-1">
+                <ShieldCheck size={12} className="text-emerald-400" />
+                <p className="text-[11px] text-gray-300 font-medium tracking-wide">
+                  GÜVENLİ BANKACILIK ALTYAPISI
+                </p>
+              </div>
             </div>
           </div>
-          <div className="w-full sm:w-auto">
+          
+          {/* Kart Önizleme Rozeti */}
+          <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
+            <div className={`w-2 h-2 rounded-full bg-linear-to-r ${selectedOption.color} shadow-[0_0_10px_rgba(255,255,255,0.5)]`}></div>
+            <span className="text-xs text-white/90 font-medium">{selectedOption.label} Seçildi</span>
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 sm:gap-6">
+        <form className="flex flex-col gap-8 relative z-10">
           
-          {/* Input alanları */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {/* Input Alanları */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Ad Soyad */}
             <div className="relative group">
-              <User size={18} className="absolute left-3 top-[2.4rem] sm:top-10 text-cyan-400 z-10 pointer-events-none" />
-              <label className="block text-[10px] sm:text-[11px] font-black text-white uppercase mb-2 ml-1 tracking-widest">
+              <label className={`absolute left-3 transition-all duration-300 pointer-events-none z-20 ${
+                focusedField === 'fullName' || formData.fullName 
+                ? '-top-2.5 text-[10px] text-cyan-300 bg-gray-900/80 px-2 rounded-full border border-cyan-500/30' 
+                : 'top-3.5 text-sm text-gray-400'
+              }`}>
                 Ad Soyad
               </label>
-              <input
-                type="text"
-                name="fullName"
-                placeholder="Adınız Soyadınız"
-                className="w-full pl-10 sm:pl-11 pr-4 py-3 sm:py-3.5 bg-white/10 border-2 border-white/30 rounded-xl text-sm text-white placeholder-white/40 focus:bg-black/40 focus:border-cyan-400 focus:outline-none transition-all font-bold shadow-inner active:border-cyan-400"
-                onChange={handleChange}
-                required
-              />
+              <div className={`relative transition-all duration-300 rounded-xl overflow-hidden ${focusedField === 'fullName' ? 'shadow-[0_0_15px_-5px_rgba(34,211,238,0.3)]' : ''}`}>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onFocus={() => setFocusedField('fullName')}
+                  onBlur={() => setFocusedField(null)}
+                  className="w-full pl-4 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-transparent focus:bg-black/20 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-all font-medium"
+                  onChange={handleChange}
+                  required
+                />
+                <User size={18} className={`absolute right-4 top-3.5 transition-colors duration-300 ${focusedField === 'fullName' ? 'text-cyan-400' : 'text-gray-500'}`} />
+              </div>
             </div>
 
+            {/* T.C. */}
             <div className="relative group">
-              <Mail size={18} className="absolute left-3 top-[2.4rem] sm:top-10 text-cyan-400 z-10 pointer-events-none" />
-              <label className="block text-[10px] sm:text-[11px] font-black text-white uppercase mb-2 ml-1 tracking-widest">
-                E-posta
+              <label className={`absolute left-3 transition-all duration-300 pointer-events-none z-20 ${
+                focusedField === 'tcNo' || formData.tcNo 
+                ? '-top-2.5 text-[10px] text-cyan-300 bg-gray-900/80 px-2 rounded-full border border-cyan-500/30' 
+                : 'top-3.5 text-sm text-gray-400'
+              }`}>
+                T.C. Kimlik Numarası
               </label>
-              <input
-                type="email"
-                name="email"
-                placeholder="ornek@mail.com"
-                className="w-full pl-10 sm:pl-11 pr-4 py-3 sm:py-3.5 bg-white/10 border-2 border-white/30 rounded-xl text-sm text-white placeholder-white/40 focus:bg-black/40 focus:border-cyan-400 focus:outline-none transition-all font-bold shadow-inner active:border-cyan-400"
-                onChange={handleChange}
-                required
-              />
+              <div className={`relative transition-all duration-300 rounded-xl overflow-hidden ${focusedField === 'tcNo' ? 'shadow-[0_0_15px_-5px_rgba(34,211,238,0.3)]' : ''}`}>
+                <input
+                  type="text"
+                  name="tcNo"
+                  value={formData.tcNo}
+                  onFocus={() => setFocusedField('tcNo')}
+                  onBlur={() => setFocusedField(null)}
+                  className="w-full pl-4 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-transparent focus:bg-black/20 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-all font-medium"
+                  onChange={handleChange}
+                  required
+                />
+                <CreditCard size={18} className={`absolute right-4 top-3.5 transition-colors duration-300 ${focusedField === 'tcNo' ? 'text-cyan-400' : 'text-gray-500'}`} />
+              </div>
             </div>
 
+            {/* E-posta */}
             <div className="relative group">
-              <Phone size={18} className="absolute left-3 top-[2.4rem] sm:top-10 text-cyan-400 z-10 pointer-events-none" />
-              <label className="block text-[10px] sm:text-[11px] font-black text-white uppercase mb-2 ml-1 tracking-widest">
-                Telefon
+               <label className={`absolute left-3 transition-all duration-300 pointer-events-none z-20 ${
+                focusedField === 'email' || formData.email 
+                ? '-top-2.5 text-[10px] text-cyan-300 bg-gray-900/80 px-2 rounded-full border border-cyan-500/30' 
+                : 'top-3.5 text-sm text-gray-400'
+              }`}>
+                E-posta Adresi
               </label>
-              <input
-                type="tel"
-                name="phone"
-                placeholder="05xx..."
-                className="w-full pl-10 sm:pl-11 pr-4 py-3 sm:py-3.5 bg-white/10 border-2 border-white/30 rounded-xl text-sm text-white placeholder-white/40 focus:bg-black/40 focus:border-cyan-400 focus:outline-none transition-all font-bold shadow-inner active:border-cyan-400"
-                onChange={handleChange}
-                required
-              />
+              <div className={`relative transition-all duration-300 rounded-xl overflow-hidden ${focusedField === 'email' ? 'shadow-[0_0_15px_-5px_rgba(34,211,238,0.3)]' : ''}`}>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
+                  className="w-full pl-4 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-transparent focus:bg-black/20 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-all font-medium"
+                  onChange={handleChange}
+                  required
+                />
+                <Mail size={18} className={`absolute right-4 top-3.5 transition-colors duration-300 ${focusedField === 'email' ? 'text-cyan-400' : 'text-gray-500'}`} />
+              </div>
+            </div>
+
+            {/* Telefon */}
+            <div className="relative group">
+               <label className={`absolute left-3 transition-all duration-300 pointer-events-none z-20 ${
+                focusedField === 'phone' || formData.phone 
+                ? '-top-2.5 text-[10px] text-cyan-300 bg-gray-900/80 px-2 rounded-full border border-cyan-500/30' 
+                : 'top-3.5 text-sm text-gray-400'
+              }`}>
+                Telefon Numarası
+              </label>
+              <div className={`relative transition-all duration-300 rounded-xl overflow-hidden ${focusedField === 'phone' ? 'shadow-[0_0_15px_-5px_rgba(34,211,238,0.3)]' : ''}`}>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onFocus={() => setFocusedField('phone')}
+                  onBlur={() => setFocusedField(null)}
+                  className="w-full pl-4 pr-10 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-transparent focus:bg-black/20 focus:border-cyan-500/50 focus:outline-none focus:ring-1 focus:ring-cyan-500/20 transition-all font-medium"
+                  onChange={handleChange}
+                  required
+                />
+                <Phone size={18} className={`absolute right-4 top-3.5 transition-colors duration-300 ${focusedField === 'phone' ? 'text-cyan-400' : 'text-gray-500'}`} />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 items-end border-t border-white/20 pt-6 sm:pt-8">
-            <div className="md:col-span-1 relative z-100">
-              <label className="block text-[10px] sm:text-[11px] font-black text-white uppercase mb-2 ml-1 tracking-widest">
-                Kart Tipi
-              </label>
+          {/* Alt Bölüm */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 pt-6 border-t border-white/5 items-center">
+            
+            {/* Kart Tipi Seçimi */}
+            <div className="md:col-span-1 relative z-50" ref={dropdownRef}>
+              <span className="block text-[10px] font-bold text-gray-400 uppercase mb-2 tracking-widest pl-1">
+                Kart Tercihi
+              </span>
 
               <div className="relative">
                 <button
                   type="button"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    setIsOpen(!isOpen);
-                  }}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    setIsOpen(!isOpen);
-                  }}
-                  className="cursor-pointer w-full px-4 py-3.5 bg-white/10 border-2 border-white/30 rounded-xl text-sm text-white font-bold flex items-center justify-between focus:bg-black/40 focus:border-cyan-400 focus:outline-none transition-all shadow-inner active:bg-black/40 active:border-cyan-400 active:scale-98 z-100 relative touch-manipulation select-none"
+                  onClick={() => setIsOpen(!isOpen)}
+                  className={`relative w-full cursor-pointer px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white font-medium flex items-center justify-between hover:bg-white/10 hover:border-white/20 transition-all ${isOpen ? 'ring-1 ring-cyan-400 border-cyan-400/50' : ''}`}
                 >
-                  <span>{selectedOption.label}</span>
-                  <ChevronDown size={18} className={`transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full bg-linear-to-r ${selectedOption.color}`}></div>
+                    <span>{selectedOption.label}</span>
+                  </div>
+                  <ChevronDown size={16} className={`text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-cyan-400' : ''}`} />
                 </button>
 
-                {/* Dropdown menü  */}
                 {isOpen && (
-                  <div className="absolute top-full mt-2 w-full rounded-xl bg-black/95 border-2 border-white/20 shadow-2xl overflow-hidden z-110 backdrop-blur-xl">
-                    {cardOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          handleOptionClick(option.value);
-                        }}
-                        onTouchStart={(e) => {
-                          e.preventDefault();
-                          handleOptionClick(option.value);
-                        }}
-                        className={`cursor-pointer w-full px-4 py-3.5 text-left text-sm font-bold transition-all active:scale-98 touch-manipulation select-none ${
-                          formData.cardType === option.value
-                            ? 'bg-cyan-400/30 text-cyan-400 border-l-4 border-cyan-400'
-                            : 'text-white active:bg-white/10'
-                        }`}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
+                  <div className="absolute top-full mt-2 w-full rounded-xl bg-[#0a0a0a]/95 border border-white/10 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] overflow-hidden z-200 backdrop-blur-md">
+                    <div className="p-1">
+                      {cardOptions.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => handleOptionClick(option.value)}
+                          className={`w-full cursor-pointer px-3 py-3 rounded-lg flex items-center gap-3 transition-all text-sm group ${
+                            formData.cardType === option.value
+                              ? 'bg-white/10 text-white'
+                              : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                          }`}
+                        >
+                           <div className={`w-8 h-5 rounded border border-white/10 bg-linear-to-br ${option.color} opacity-80 group-hover:opacity-100 transition-opacity shadow-sm`}></div>
+                           <span className="font-medium">{option.label}</span>
+                           {formData.cardType === option.value && (
+                             <div className="ml-auto w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]"></div>
+                           )}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
             </div>
 
             <div className="md:col-span-3">
+              <span className="block text-[10px] font-bold text-transparent uppercase mb-2 tracking-widest pl-1 select-none opacity-0">
+                Onay
+              </span>
               <button
                 type="button"
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  handleSubmit(e);
-                }}
-                onTouchStart={(e) => {
-                  e.preventDefault();
-                  handleSubmit(e);
-                }}
-                className="relative w-full overflow-hidden rounded-xl bg-cyan-400 py-3.5 sm:py-4 font-black uppercase tracking-wider text-black transition-all duration-300 active:bg-cyan-300 active:shadow-[0_0_30px_10px_rgba(34,211,238,0.6)] active:scale-98 flex items-center justify-center gap-3 group touch-manipulation select-none cursor-pointer"
+                onClick={handleSubmit}
+                className="relative w-full overflow-hidden rounded-full group cursor-pointer shadow-[0_4px_20px_-5px_rgba(6,182,212,0.4)] hover:shadow-[0_8px_30px_-5px_rgba(6,182,212,0.6)] transition-shadow duration-300"
               >
-                <span>BAŞVUR</span>
-                <Send size={18} className="group-active:translate-x-1 transition-transform" />
-                <span className="pointer-events-none absolute inset-0 rounded-xl opacity-0 shadow-[0_0_40px_#22d3ee] transition-opacity duration-500 group-active:opacity-100" />
-                <span className="pointer-events-none absolute inset-0 rounded-xl bg-linear-to-r from-transparent via-cyan-200 to-transparent -translate-x-full transition-transform duration-700 group-active:translate-x-full" />
+                <div className="absolute inset-0 bg-linear-to-r from-cyan-500 to-blue-600 transition-all duration-300 group-hover:scale-[1.02]"></div>
+                
+                {/* Glow Efekti */}
+                <div className="absolute -inset-1 bg-linear-to-r from-cyan-400 to-blue-500 rounded-full blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+
+                <div className="relative px-6 py-4 flex items-center justify-center gap-3 bg-transparent transition-transform active:scale-[0.98]">
+                   <span className="font-bold text-white tracking-widest uppercase text-sm">Başvuruyu Tamamla</span>
+                   <Send size={18} className="text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
+                </div>
               </button>
             </div>
           </div>
-        </div>
+        </form>
       </GlassCard>
     </>
   );
