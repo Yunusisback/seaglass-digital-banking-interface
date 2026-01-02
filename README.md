@@ -12,7 +12,7 @@ SeaGlass is a futuristic digital banking interface project that combines the cut
 ## 📺 Project Preview
 
 <div align="center">
-  <video src="" width="100%" autoplay loop muted playsinline></video>
+  <video src="https://github.com/user-attachments/assets/92eecf8a-b695-4ad6-9599-a949896ab6fd" width="100%" autoplay loop muted playsinline></video>
 </div>
 
 ---
@@ -20,9 +20,13 @@ SeaGlass is a futuristic digital banking interface project that combines the cut
 ## ✨ Key Features
 
 * **💎 High-End Glassmorphism:** The entire interface is built with `backdrop-blur-xl` and semi-transparent layers to achieve a realistic frosted glass feel.
+* 
 * **💳 3D Interactive Card:** The `CreditCardShowcase` component features 3D depth that physically responds to mouse movements, powered by `react-parallax-tilt`.
+* 
 * **🌌 Dynamic Vanta.js Background:** Utilizes a `Three.js` based Vanta (CELLS) effect, creating a living, deep, and interactive visual engine.
+* 
 * **📱 Fully Responsive:** A fluid structure specifically optimized for Mobile, Tablet, and Desktop screens.
+* 
 * **⚡ Modern Tech Stack:** Maximum performance and rapid development with **React 19**, **Vite 7**, and **Tailwind CSS v4**.
 
 ---
