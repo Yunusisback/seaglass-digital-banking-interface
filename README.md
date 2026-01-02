@@ -1,4 +1,4 @@
-# 🌊 SeaGlass Digital Banking UI
+# 🌊 SeaGlass Digital Banking 
 
 <div align="center">
 
